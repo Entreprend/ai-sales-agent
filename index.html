@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Sales Agent — Automex-AI</title>
+<meta name="description" content="Démo interactive d'un agent commercial IA : qualification automatique des leads, synchronisation Google Sheets et notifications WhatsApp instantanées."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- GAUCHE — Présentation -->
+  <aside class="info-panel">
+    <div class="info-inner">
+      <p class="brand-logo">Automex<span>·AI</span></p>
+
+      <span class="demo-badge">Démo interactive</span>
+
+      <h1 class="info-title">AI Sales Agent</h1>
+      <p class="info-sub">Alex, votre assistant commercial IA, qualifie vos prospects 24h/24 — même quand vous dormez.</p>
+
+      <div class="info-block">
+        <h2 class="info-block-title">Chaque jour, des prospects partent sans réponse.</h2>
+        <ul class="point-list">
+          <li>
+            <span class="point-icon icon-cross"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            Vous ne pouvez pas répondre à tous les messages en temps réel
+          </li>
+          <li>
+            <span class="point-icon icon-cross"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            Vos commerciaux perdent du temps sur des leads non qualifiés
+          </li>
+          <li>
+            <span class="point-icon icon-cross"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            Vous perdez des ventes faute de réactivité
+          </li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h2 class="info-block-title">Alex travaille pour vous, 24h/24.</h2>
+        <ul class="point-list">
+          <li>
+            <span class="point-icon icon-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></span>
+            Accueille chaque visiteur instantanément
+          </li>
+          <li>
+            <span class="point-icon icon-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></span>
+            Collecte toutes les informations importantes
+          </li>
+          <li>
+            <span class="point-icon icon-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></span>
+            Qualifie automatiquement les prospects sérieux
+          </li>
+          <li>
+            <span class="point-icon icon-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></span>
+            Vous alerte dès qu'un lead chaud est prêt
+          </li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h2 class="info-block-title">Comment ça marche</h2>
+        <ol class="mini-timeline">
+          <li><span class="tl-num">1</span><span class="tl-text">Visiteur arrive sur votre site</span></li>
+          <li><span class="tl-num">2</span><span class="tl-text">Alex engage la conversation</span></li>
+          <li><span class="tl-num">3</span><span class="tl-text">Prospect qualifié en 2 minutes</span></li>
+          <li><span class="tl-num">4</span><span class="tl-text">Vous recevez une notification WhatsApp</span></li>
+          <li><span class="tl-num">5</span><span class="tl-text">Vous ne contactez que les leads sérieux</span></li>
+        </ol>
+      </div>
+
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <span>Cette démo est interactive — discutez réellement avec Alex et voyez comment vos prospects seront pris en charge.</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- DROITE — Fenêtre chat -->
+  <main class="chat-panel">
+    <div class="chat-window">
+      <div class="browser-bar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span class="browser-url">automex-ai.com/ai-sales-agent</span>
+      </div>
+
+      <div class="chat-header">
+        <div class="chat-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 16h.01M16 16h.01"/></svg>
+        </div>
+        <div class="chat-head-info">
+          <p class="chat-name">Alex</p>
+          <span class="chat-status"><span class="status-dot"></span>En ligne</span>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages"></div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Écrivez votre message…" autocomplete="off"/>
+        <button type="button" id="chat-send" aria-label="Envoyer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M17 7H7M17 7v10"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="js/sheets.js"></script>
+<script src="js/api.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>
