@@ -224,6 +224,10 @@ ul{list-style:none}
   .chat-window{height:min(640px,75vh);max-width:none}
 }
 
+@media(max-width:768px){
+  .chat-panel{order:-1}
+}
+
 @media(max-width:480px){
   .browser-url{display:none}
   .msg-row{max-width:94%}
