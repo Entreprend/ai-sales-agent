@@ -71,6 +71,10 @@ const steps = [
 ];
 
 let currentStepIndex = 0;
+let conversationEnded = false;
+
+const FOLLOWUP_MESSAGE = "Avez-vous d'autres questions ? Je suis là pour vous aider. 😊";
+const CONTACT_MESSAGE = "Pour toute question supplémentaire, vous pouvez aussi nous contacter directement sur WhatsApp : +229 50 13 18 05 ou par email : contact@automex.ai";
 
 const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
@@ -160,8 +164,8 @@ function askCurrentStep() {
     addBotMessage(step.message(data));
 
     if (step.id === 'confirmation') {
-      setInputEnabled(false, 'Conversation terminée');
       finalizeConversation();
+      askFollowUp();
       return;
     }
 
@@ -171,9 +175,35 @@ function askCurrentStep() {
   }, TYPING_DELAY);
 }
 
+function askFollowUp() {
+  setInputEnabled(false);
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    addBotMessage(FOLLOWUP_MESSAGE);
+    conversationEnded = true;
+    setInputEnabled(true);
+    chatInput.focus();
+  }, TYPING_DELAY);
+}
+
 function submitAnswer(rawValue) {
   const value = rawValue.trim();
   if (!value || chatInput.disabled) return;
+
+  if (conversationEnded) {
+    addUserMessage(value);
+    chatInput.value = '';
+    setInputEnabled(false);
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBotMessage(CONTACT_MESSAGE);
+      setInputEnabled(true);
+      chatInput.focus();
+    }, TYPING_DELAY);
+    return;
+  }
 
   const step = steps[currentStepIndex];
 
