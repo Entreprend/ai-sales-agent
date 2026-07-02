@@ -76,32 +76,64 @@ function wait(ms) {
 
 /**
  * Cherche le marqueur [LEAD_COMPLET]{...JSON...} dans la réponse d'Alex.
+ * Repère les accolades { } en comptant leur profondeur pour extraire
+ * uniquement le bloc JSON, même si du texte suit après le marqueur.
  * Retourne { displayText, leadData } — leadData est null si le marqueur
  * est absent ou si le JSON est invalide.
  */
 function extractLead(replyText) {
-  const idx = replyText.indexOf(LEAD_MARKER);
-  if (idx === -1) {
+  const markerIndex = replyText.indexOf(LEAD_MARKER);
+  console.log('[extractLead] marqueur trouvé ?', markerIndex !== -1, '(index:', markerIndex, ')');
+
+  if (markerIndex === -1) {
     return { displayText: replyText, leadData: null };
   }
 
-  const displayText = replyText.slice(0, idx).trim();
-  const jsonPart = replyText.slice(idx + LEAD_MARKER.length).trim();
+  const displayText = replyText.slice(0, markerIndex).trim();
+
+  const startIndex = replyText.indexOf('{', markerIndex);
+  if (startIndex === -1) {
+    console.warn('[extractLead] Aucune accolade ouvrante trouvée après le marqueur.');
+    return { displayText, leadData: null };
+  }
+
+  let depth = 0;
+  let endIndex = -1;
+  for (let i = startIndex; i < replyText.length; i++) {
+    if (replyText[i] === '{') depth++;
+    if (replyText[i] === '}') {
+      depth--;
+      if (depth === 0) {
+        endIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (endIndex === -1) {
+    console.warn('[extractLead] Accolade fermante correspondante introuvable — JSON incomplet.');
+    return { displayText, leadData: null };
+  }
+
+  const jsonPart = replyText.substring(startIndex, endIndex + 1);
+  console.log('[extractLead] JSON brut extrait:', jsonPart);
 
   try {
     const leadData = JSON.parse(jsonPart);
+    console.log('[extractLead] JSON parsé avec succès:', leadData);
     return { displayText, leadData };
   } catch (err) {
-    console.warn('Impossible de parser le JSON du lead:', err, jsonPart);
+    console.warn('[extractLead] Impossible de parser le JSON du lead:', err, jsonPart);
     return { displayText, leadData: null };
   }
 }
 
 function finalizeConversation(leadData) {
-  console.log('AI Sales Agent — Lead complet:', leadData);
+  console.log('[finalizeConversation] Lead complet — appel de sendToSheets/sendWhatsApp/sendEmail:', leadData);
   sendToSheets(leadData);
   sendWhatsApp(leadData);
   sendEmail(leadData);
+  console.log('[finalizeConversation] sendToSheets/sendWhatsApp/sendEmail appelés.');
 }
 
 async function submitAnswer(rawValue) {
@@ -120,6 +152,7 @@ async function submitAnswer(rawValue) {
       callN8nAgent(conversationHistory),
       wait(MIN_TYPING_MS)
     ]);
+    console.log('[submitAnswer] Réponse brute reçue de n8n:', reply);
 
     hideTyping();
 
@@ -127,7 +160,11 @@ async function submitAnswer(rawValue) {
     if (displayText) addBotMessage(displayText);
     conversationHistory.push({ role: 'assistant', content: reply });
 
-    if (leadData) finalizeConversation(leadData);
+    if (leadData) {
+      finalizeConversation(leadData);
+    } else {
+      console.log('[submitAnswer] Pas de lead complet dans cette réponse — conversation continue.');
+    }
   } catch (error) {
     console.error('Erreur conversation n8n:', error);
     hideTyping();
